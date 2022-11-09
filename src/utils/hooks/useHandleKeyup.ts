@@ -15,7 +15,7 @@ const useHandleKeyup = (
     if (e.key === 'ArrowUp' && keyIndex > -1) {
       setKeyIndex((prev) => prev - 1);
     }
-    if (e.key === 'Escape' && keyIndex > -1) {
+    if (e.key === 'Escape') {
       setKeyIndex(-1);
       reset([]);
     }
