@@ -32,7 +32,7 @@ export default function Main() {
     setSearchList(() => []);
     try {
       const { data } = await getList(searchedKeyword);
-      console.log('calling api', data);
+      console.log('calling api');
       if (data.length > 0) {
         setSearchList(() => data);
         writeToCache(data);
