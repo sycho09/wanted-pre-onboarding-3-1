@@ -1,9 +1,4 @@
-import { ISearchedList } from './Type';
-
-export interface ICache {
-  date: number;
-  value: ISearchedList[];
-}
+import { ICache, ISearchedList } from './Type';
 
 const useLocalStorage = (keyword: string, list?: ISearchedList[]) => {
   const cachingTime = 10 * 60 * 1000;
