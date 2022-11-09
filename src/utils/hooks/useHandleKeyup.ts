@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ISearchedList } from './Type';
+import { ISearchedList } from '../Type';
 
 const useHandleKeyup = (list: ISearchedList[]) => {
   const [keyIndex, setKeyIndex] = useState(-1);
