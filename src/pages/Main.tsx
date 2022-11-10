@@ -1,40 +1,55 @@
 import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { actionCreator } from '../state';
+import { RootState } from '../state/reducers';
 import {
   Blank,
   Wrapper,
   Title,
   InputBox,
+  InputContent,
   Input,
   SearchButton,
   ListBox,
-  ListItem
+  ListItem,
+  ListContainer
 } from '../components';
 import getList from '../utils/api';
 import useDebounce from '../utils/hooks/useDebounce';
 import useHandleKeyup from '../utils/hooks/useHandleKeyup';
 import useLocalStorage from '../utils/hooks/useLocalStorage';
 import textHighligter from '../utils/textHighlighter';
-import { ICache, ISearchedList } from '../utils/Type';
+import { ICache } from '../utils/Type';
 
 export default function Main() {
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [searchList, setSearchList] = useState<ISearchedList[]>([]);
   const [noResult, setNoResult] = useState(false);
+
+  const state = useSelector((state: RootState) => state.list);
+  const dispatch = useDispatch();
+
+  const { saveSearchList, saveHistory } = bindActionCreators(
+    actionCreator,
+    dispatch
+  );
 
   const searchedKeyword = useDebounce(searchKeyword, 500);
   const { listRef, keyIndex, handleKeyup } = useHandleKeyup(
-    searchList,
-    setSearchList
+    state.searchList,
+    saveSearchList
   );
   const { getFromCache, writeToCache } = useLocalStorage(searchedKeyword);
 
   const getFreshList = async () => {
-    setSearchList(() => []);
+    saveSearchList([]);
+
     try {
       const { data } = await getList(searchedKeyword);
       console.log('calling api');
       if (data.length > 0) {
-        setSearchList(() => data);
+        saveHistory(data);
+        saveSearchList(data);
         writeToCache(data);
       }
       if (data.length < 1) {
@@ -46,21 +61,16 @@ export default function Main() {
   };
 
   const isCacheInStorage = () => {
-    setSearchList(() => []);
+    saveSearchList([]);
     const hasCache = getFromCache();
 
-    if (hasCache && hasCache.length > 0) {
-      setSearchList(() => hasCache);
-    }
-
-    if (!hasCache) {
-      getFreshList();
-    }
+    if (hasCache && hasCache.length > 0) saveSearchList(hasCache);
+    if (!hasCache) getFreshList();
   };
 
   useEffect(() => {
     if (searchedKeyword !== '') isCacheInStorage();
-    if (searchedKeyword === '') setSearchList([]);
+    if (searchedKeyword === '') saveSearchList([]);
   }, [searchedKeyword]);
 
   useEffect(() => {
@@ -75,30 +85,37 @@ export default function Main() {
 
   return (
     <Wrapper>
-      <Title>국내 모든 임상시험 검색하고</Title>
-      <Title>온라인으로 참여하기</Title>
+      <Title>
+        국내 모든 임상시험 검색하고
+        <br />
+        온라인으로 참여하기
+      </Title>
 
       <InputBox>
-        <Input
-          value={searchKeyword}
-          onKeyUp={handleKeyup}
-          onChange={(e) => setSearchKeyword(e.target.value)}
-        />
-        <SearchButton>검색</SearchButton>
+        <InputContent>
+          <Input
+            placeholder='질환명을 입력해주세요.'
+            value={searchKeyword}
+            onKeyUp={handleKeyup}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+          />
+        </InputContent>
+        <SearchButton />
       </InputBox>
 
-      <div style={{ overflow: 'hidden' }}>
-        {searchList.length > 0 && (
+      {state.searchList.length > 0 && (
+        <ListContainer>
           <ListBox ref={listRef}>
-            {searchList.map((result, i) => (
+            {state.searchList.map((result, i) => (
               <ListItem key={result.sickCd} isFocus={i === keyIndex && true}>
                 {textHighligter(result.sickNm, searchedKeyword)}
               </ListItem>
             ))}
           </ListBox>
-        )}
-      </div>
-      {noResult && searchList.length < 1 && searchKeyword !== '' && (
+        </ListContainer>
+      )}
+
+      {noResult && state.searchList.length < 1 && searchKeyword !== '' && (
         <Blank>검색어 없음</Blank>
       )}
     </Wrapper>
