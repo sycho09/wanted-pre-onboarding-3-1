@@ -13,4 +13,6 @@ export const Input = styled.input`
   font-size: 1.125rem;
   font-weight: 400;
   flex-grow: 1;
+  color: #007be9;
+  caret-color: #007be9;
 `;

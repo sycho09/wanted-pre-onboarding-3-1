@@ -11,7 +11,6 @@ const useHandleKeyup = (
   const listRef = useRef<HTMLUListElement>(null);
 
   const handleKeyup = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    console.log(keyIndex);
     if (e.key === 'ArrowDown') {
       keyIndex > list.length - 2
         ? setKeyIndex(() => list.length - 1)

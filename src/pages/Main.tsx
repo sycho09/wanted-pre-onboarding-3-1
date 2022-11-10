@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { actionCreator } from '../state';
@@ -20,7 +20,7 @@ import useDebounce from '../utils/hooks/useDebounce';
 import useHandleKeyup from '../utils/hooks/useHandleKeyup';
 import useLocalStorage from '../utils/hooks/useLocalStorage';
 import textHighligter from '../utils/textHighlighter';
-import { ICache } from '../utils/Type';
+import { ICache, ISearchedList } from '../utils/Type';
 
 export default function Main() {
   const [searchKeyword, setSearchKeyword] = useState('');
@@ -29,7 +29,10 @@ export default function Main() {
   const state = useSelector((state: RootState) => state.list);
   const dispatch = useDispatch();
 
-  const { saveSearchList } = bindActionCreators(actionCreator, dispatch);
+  const { saveSearchList, saveHistory } = bindActionCreators(
+    actionCreator,
+    dispatch
+  );
 
   const searchedKeyword = useDebounce(searchKeyword, 500);
   const { listRef, keyIndex, handleKeyup } = useHandleKeyup(
@@ -44,9 +47,16 @@ export default function Main() {
     try {
       const { data } = await getList(searchedKeyword);
       console.log('calling api');
-      console.log(data);
       if (data.length > 0) {
-        // saveHistory(data);
+        const isSaved = state.history.some(
+          (list) => list.name === searchedKeyword
+        );
+        if (!isSaved) {
+          saveHistory({
+            name: searchedKeyword,
+            data: data
+          });
+        }
         saveSearchList(data);
         writeToCache(data);
       }
@@ -60,17 +70,22 @@ export default function Main() {
 
   const isCacheInStorage = () => {
     saveSearchList([]);
-    const hasCache = getFromCache();
-    console.log(hasCache);
-    if (hasCache && hasCache.length > 0) saveSearchList(hasCache);
-    if (!hasCache) getFreshList();
+    const [cachedItem] = state.history.filter(
+      (list) => list.name === searchedKeyword
+    );
+    if (cachedItem === undefined) {
+      const hasCache = getFromCache();
+      if (hasCache && hasCache.length > 0) saveSearchList(hasCache);
+      if (!hasCache) getFreshList();
+    }
+
+    if (cachedItem) saveSearchList(cachedItem.data as ISearchedList[]);
   };
 
   useEffect(() => {
     if (searchedKeyword !== '') isCacheInStorage();
     if (searchedKeyword === '') saveSearchList([]);
   }, [searchedKeyword]);
-  console.log(state.searchList);
 
   useEffect(() => {
     const isStorageEmpty = localStorage.getItem('cache');
@@ -82,6 +97,8 @@ export default function Main() {
     }
   }, []);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <Wrapper>
       <Title>
@@ -90,9 +107,10 @@ export default function Main() {
         온라인으로 참여하기
       </Title>
 
-      <InputBox>
+      <InputBox isFocus={inputRef.current?.value !== '' ? true : false}>
         <InputContent>
           <Input
+            ref={inputRef}
             placeholder='질환명을 입력해주세요.'
             value={searchKeyword}
             onKeyUp={handleKeyup}

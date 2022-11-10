@@ -7,10 +7,10 @@ export const InputWrapper = styled.div`
   width: 100%;
 `;
 
-export const InputContainer = styled.div`
+export const InputContainer = styled.div<{ isFocus: boolean }>`
   border-radius: 42px;
   border: 2px solid;
-  border-color: #ffffff;
+  border-color: ${({ isFocus }) => (isFocus ? '#007be9' : '#fff')};
   background-color: #ffffff;
   flex-direction: row;
   align-items: center;
@@ -25,14 +25,15 @@ export const InputContainer = styled.div`
 `;
 
 type Props = {
+  isFocus: boolean;
   children: React.ReactNode;
 };
 
-const InputBox = ({ children }: Props) => {
+const InputBox = ({ isFocus = false, children }: Props) => {
   return (
     <>
       <InputWrapper>
-        <InputContainer>{children}</InputContainer>
+        <InputContainer isFocus={isFocus}>{children}</InputContainer>
       </InputWrapper>
     </>
   );
