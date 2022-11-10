@@ -29,10 +29,7 @@ export default function Main() {
   const state = useSelector((state: RootState) => state.list);
   const dispatch = useDispatch();
 
-  const { saveSearchList, saveHistory } = bindActionCreators(
-    actionCreator,
-    dispatch
-  );
+  const { saveSearchList } = bindActionCreators(actionCreator, dispatch);
 
   const searchedKeyword = useDebounce(searchKeyword, 500);
   const { listRef, keyIndex, handleKeyup } = useHandleKeyup(
@@ -47,8 +44,9 @@ export default function Main() {
     try {
       const { data } = await getList(searchedKeyword);
       console.log('calling api');
+      console.log(data);
       if (data.length > 0) {
-        saveHistory(data);
+        // saveHistory(data);
         saveSearchList(data);
         writeToCache(data);
       }
@@ -63,7 +61,7 @@ export default function Main() {
   const isCacheInStorage = () => {
     saveSearchList([]);
     const hasCache = getFromCache();
-
+    console.log(hasCache);
     if (hasCache && hasCache.length > 0) saveSearchList(hasCache);
     if (!hasCache) getFreshList();
   };
@@ -72,6 +70,7 @@ export default function Main() {
     if (searchedKeyword !== '') isCacheInStorage();
     if (searchedKeyword === '') saveSearchList([]);
   }, [searchedKeyword]);
+  console.log(state.searchList);
 
   useEffect(() => {
     const isStorageEmpty = localStorage.getItem('cache');
@@ -115,7 +114,7 @@ export default function Main() {
         </ListContainer>
       )}
 
-      {noResult && state.searchList.length < 1 && searchKeyword !== '' && (
+      {noResult && state.searchList.length === 0 && searchKeyword !== '' && (
         <Blank>검색어 없음</Blank>
       )}
     </Wrapper>
