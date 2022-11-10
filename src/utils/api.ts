@@ -2,7 +2,7 @@ import { ISearchedList } from './Type';
 import request from './axios';
 
 const getList = (pathname: string) => {
-  const response = request.get<ISearchedList[]>(`?q=${pathname}`);
+  const response = request.get<ISearchedList[]>(`?sickNm_like=${pathname}`);
   return response;
 };
 
