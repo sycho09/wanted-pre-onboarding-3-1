@@ -1,12 +1,14 @@
 const textHighligter = (text: string, keyword: string) => {
-  if (keyword !== '' && text.includes(keyword)) {
-    const words = text.split(new RegExp(`(${keyword})`, 'g'));
+  const findText = text.toUpperCase();
+  const findKeyword = keyword.toUpperCase();
+  if (findKeyword !== '' && findText.includes(findKeyword)) {
+    const words = findText.split(new RegExp(`(${findKeyword})`, 'g'));
 
     return (
       <>
         {words.map((word, i) => (
           <span key={word + i}>
-            {word === keyword ? (
+            {word === findKeyword ? (
               <span style={{ fontWeight: 'bold' }}>{word}</span>
             ) : (
               <span>{word}</span>
