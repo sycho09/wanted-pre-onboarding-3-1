@@ -4,12 +4,12 @@ import { Action } from '../actions';
 
 interface INITIAL_STATE {
   searchList: ISearchedList[];
-  history: ISearchedList[];
+  history: { [keyword: string]: string | ISearchedList[] }[];
 }
 
 const initialState: INITIAL_STATE = {
   searchList: [],
-  history: []
+  history: [{ name: '', date: [] }]
 };
 
 const listReducers = (state = initialState, action: Action) => {
@@ -20,7 +20,7 @@ const listReducers = (state = initialState, action: Action) => {
         searchList: action.payload
       };
     case ActionType.HISTORY:
-      return { ...state, history: [...action.payload] };
+      return { ...state, history: [...state.history, ...action.payload] };
     default:
       return state;
   }

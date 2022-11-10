@@ -8,7 +8,7 @@ interface ListAction {
 
 interface HistoryAction {
   type: ActionType.HISTORY;
-  payload: ISearchedList[];
+  payload: { [keyword: string]: string | ISearchedList[] }[];
 }
 
 export type Action = ListAction | HistoryAction;

@@ -12,11 +12,13 @@ export const saveSearchList = (searchList: ISearchedList[]) => {
   };
 };
 
-export const saveHistory = (history: ISearchedList[]) => {
+export const saveHistory = (history: {
+  [keyword: string]: string | ISearchedList[];
+}) => {
   return (dispatch: Dispatch<Action>) => {
     dispatch({
       type: ActionType.HISTORY,
-      payload: history
+      payload: [history]
     });
   };
 };
