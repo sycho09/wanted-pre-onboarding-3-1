@@ -25,15 +25,15 @@ export const InputContainer = styled.div<{ isFocus: boolean }>`
 `;
 
 type Props = {
-  isFocus: boolean;
+  focusing: boolean;
   children: React.ReactNode;
 };
 
-const InputBox = ({ isFocus = false, children }: Props) => {
+const InputBox = ({ focusing = false, children }: Props) => {
   return (
     <>
       <InputWrapper>
-        <InputContainer isFocus={isFocus}>{children}</InputContainer>
+        <InputContainer isFocus={focusing}>{children}</InputContainer>
       </InputWrapper>
     </>
   );

@@ -26,6 +26,17 @@ const useHandleKeyup = (
   };
 
   useEffect(() => {
+    if (!listRef.current) return;
+    const target = listRef.current.children[keyIndex];
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end'
+      });
+    }
+  }, [keyIndex]);
+
+  useEffect(() => {
     setKeyIndex(-2);
   }, [list]);
 
