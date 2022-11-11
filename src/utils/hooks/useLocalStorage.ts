@@ -15,16 +15,12 @@ const useLocalStorage = (keyword: string) => {
     localStorage.setItem('cache', JSON.stringify([...cachingData]));
   };
 
-  const removeFromCache = () => {
-    cachingData.delete(keyword);
-  };
-
   const getFromCache = () => {
     const result = cachingData.get(keyword);
     if (result !== undefined) {
       const { date, value } = result;
       if (Date.now() - date >= cachingTime) {
-        removeFromCache();
+        cachingData.delete(keyword);
         return undefined;
       }
       if (Date.now() - date < cachingTime) return value;
@@ -32,7 +28,7 @@ const useLocalStorage = (keyword: string) => {
     return undefined;
   };
 
-  return { writeToCache, getFromCache, removeFromCache };
+  return { writeToCache, getFromCache };
 };
 
 export default useLocalStorage;
