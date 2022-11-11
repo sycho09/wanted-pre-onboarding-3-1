@@ -25,6 +25,7 @@ import { ICache, ISearchedList } from '../utils/Type';
 export default function Main() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [noResult, setNoResult] = useState(false);
+  const [isFocus, setIsFocus] = useState(false);
 
   const state = useSelector((state: RootState) => state.list);
   const dispatch = useDispatch();
@@ -107,13 +108,15 @@ export default function Main() {
         온라인으로 참여하기
       </Title>
 
-      <InputBox isFocus={inputRef.current?.value !== '' ? true : false}>
+      <InputBox focusing={isFocus}>
         <InputContent>
           <Input
             ref={inputRef}
             placeholder='질환명을 입력해주세요.'
             value={searchKeyword}
             onKeyUp={handleKeyup}
+            onBlur={() => setIsFocus(false)}
+            onFocus={() => setIsFocus(true)}
             onChange={(e) => setSearchKeyword(e.target.value)}
           />
         </InputContent>
