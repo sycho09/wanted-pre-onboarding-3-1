@@ -7,7 +7,7 @@ const useHandleKeyup = (
   list: ISearchedList[],
   reset: (searchList: ISearchedList[]) => (dispatch: Dispatch<Action>) => void
 ) => {
-  const [keyIndex, setKeyIndex] = useState(-1);
+  const [keyIndex, setKeyIndex] = useState(-2);
   const listRef = useRef<HTMLUListElement>(null);
 
   const handleKeyup = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ const useHandleKeyup = (
   };
 
   useEffect(() => {
-    setKeyIndex(-1);
+    setKeyIndex(-2);
   }, [list]);
 
   return { handleKeyup, keyIndex, listRef };
