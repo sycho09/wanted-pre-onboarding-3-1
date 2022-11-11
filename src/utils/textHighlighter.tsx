@@ -9,7 +9,7 @@ const textHighligter = (text: string, keyword: string) => {
         {words.map((word, i) => (
           <span key={word + i}>
             {word === findKeyword ? (
-              <span style={{ fontWeight: 'bold' }}>{word}</span>
+              <strong style={{ fontWeight: 'bold' }}>{word}</strong>
             ) : (
               <span>{word}</span>
             )}
